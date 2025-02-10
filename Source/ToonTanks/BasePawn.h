@@ -18,6 +18,8 @@ public:
 	// Sets default values for this pawn's properties
 	ABasePawn();
 
+	virtual void HandleDestruction();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString logString;
 

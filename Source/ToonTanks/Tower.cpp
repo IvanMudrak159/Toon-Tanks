@@ -42,3 +42,9 @@ void ATower::Tick(float DeltaSeconds)
 		RotateTurret(Tank->GetActorLocation());
 	}
 }
+
+void ATower::HandleDestruction()
+{
+	Super::HandleDestruction();
+	Destroy();
+}
