@@ -5,6 +5,7 @@
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -14,6 +15,9 @@ AProjectile::AProjectile()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = StaticMesh;
 
+	SmokeParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle System Component"));
+	SmokeParticleSystemComponent->SetupAttachment(RootComponent);
+
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
 }
 
@@ -22,13 +26,37 @@ void AProjectile::BeginPlay()
 	Super::BeginPlay();
 	StaticMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 
+	if (LaunchSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, LaunchSound, GetActorLocation());
+	}
+
+
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	auto MyOwner = GetOwner();
-	if (MyOwner == nullptr) return;
-	if (OtherActor == nullptr or OtherActor == MyOwner) return;
+	if (MyOwner == nullptr or OtherActor == nullptr or OtherActor == MyOwner) 
+	{
+		Destroy();
+		return;
+	}
+	if (HitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticles, Hit.ImpactPoint);
+	}
+
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+	}
+
+	if (HitCameraShakeClass)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(HitCameraShakeClass);
+	}
+
 	AController* InstigatorController = MyOwner->GetInstigatorController();
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, InstigatorController, this, UDamageType::StaticClass());
 	Destroy();
