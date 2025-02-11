@@ -1,4 +1,5 @@
 I've passed a course project: 
-https://github.com/user-attachments/assets/0da04273-0b0b-4151-bf19-fdd960c1ebd7
+
+https://github.com/user-attachments/assets/8e07198d-03bd-49a8-8182-9b9c5ea07eda
 
 Here's my adjustments:
