@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasePawn.h"
+#include "BaseEnemy.h"
 #include "Tower.generated.h"
 
 class ATank;
@@ -11,13 +11,11 @@ class ATank;
  * 
  */
 UCLASS()
-class TOONTANKS_API ATower : public ABasePawn
+class TOONTANKS_API ATower : public ABaseEnemy
 {
 	GENERATED_BODY()
 
 public:
-	virtual void Tick(float DeltaSeconds) override;
-
 	virtual void HandleDestruction() override;
 
 protected:
@@ -25,13 +23,5 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	ATank* Tank;
-	FTimerHandle TimerHandle;
-	float FireRate = 2.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float FireRange = 15.f;
-
 	void CheckFireCondition();
-	bool IsInRange();
 };

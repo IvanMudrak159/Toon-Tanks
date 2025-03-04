@@ -40,7 +40,7 @@ void ABasePawn::HandleDestruction()
 	}
 }
 
-void ABasePawn::RotateTurret(FVector LookAtTarget)
+void ABasePawn::RotateTurret(FVector LookAtTarget, bool drawDebug)
 {
 	FVector ToTarget = LookAtTarget - TurretMesh->GetComponentLocation();
 	FRotator LookAtRotation = FRotator(0.f, ToTarget.Rotation().Yaw, 0.f);
@@ -48,13 +48,47 @@ void ABasePawn::RotateTurret(FVector LookAtTarget)
 		LookAtRotation, 
 		UGameplayStatics::GetWorldDeltaSeconds(this), 
 		5.f));
+
+	if (drawDebug)
+	{
+		DrawDebugLine(
+			GetWorld(),
+			TurretMesh->GetComponentLocation(),
+			LookAtTarget,
+			FColor::Red,  // Line color
+			false,        // Persistent (false = disappears after some time)
+			2.f,          // Lifetime in seconds
+			0,            // Depth priority
+			2.f           // Line thickness
+		);
+	}
+}
+
+void ABasePawn::Fire(FVector velocity)
+{
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileClass,
+		ProjectileSpawnPoint->GetComponentLocation(),
+		ProjectileSpawnPoint->GetComponentRotation());
+	Projectile->SetProjectileVelocity(velocity);
+	Projectile->SetOwner(this);
+	Projectile->OnProjectileHit.AddDynamic(this, &ABasePawn::OnProjectileHitCallback);
 }
 
 void ABasePawn::Fire()
 {
-	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
-		ProjectileClass, 
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileClass,
 		ProjectileSpawnPoint->GetComponentLocation(),
 		ProjectileSpawnPoint->GetComponentRotation());
 	Projectile->SetOwner(this);
+}
+
+void ABasePawn::OnProjectileHitCallback(AProjectile* HitProjectile)
+{
+	if (HitProjectile)
+	{
+		// Properly unsubscribe from the delegate
+		HitProjectile->OnProjectileHit.RemoveDynamic(this, &ABasePawn::OnProjectileHitCallback);
+	}
 }

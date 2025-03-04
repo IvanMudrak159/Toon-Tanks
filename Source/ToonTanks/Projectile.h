@@ -10,6 +10,8 @@ class UProjectileMovementComponent;
 class USoundBase;
 class UCameraShakeBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProjectileHit, AProjectile*, ProjectileRef);
+
 UCLASS()
 class TOONTANKS_API AProjectile : public AActor
 {
@@ -19,6 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
+	void SetProjectileVelocity(FVector velocity) const;
+	FOnProjectileHit OnProjectileHit;
 
 private:
 

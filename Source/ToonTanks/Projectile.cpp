@@ -21,6 +21,12 @@ AProjectile::AProjectile()
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
 }
 
+void AProjectile::SetProjectileVelocity(FVector velocity) const
+{
+	if (ProjectileMovementComponent == nullptr) return;
+	ProjectileMovementComponent->Velocity = velocity;
+}
+
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -59,5 +65,6 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 
 	AController* InstigatorController = MyOwner->GetInstigatorController();
 	UGameplayStatics::ApplyDamage(OtherActor, Damage, InstigatorController, this, UDamageType::StaticClass());
+	OnProjectileHit.Broadcast(this);
 	Destroy();
 }

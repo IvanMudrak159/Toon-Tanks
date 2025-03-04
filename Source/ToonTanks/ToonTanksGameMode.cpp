@@ -33,6 +33,15 @@ void AToonTanksGameMode::ActorDied(AActor* DeadActor)
 
 void AToonTanksGameMode::BeginPlay()
 {
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("GameMode running as Listen Server"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("GameMode running as Client"));
+	}
+
 	Super::BeginPlay();
 	Tank = Cast<ATank>(UGameplayStatics::GetPlayerPawn(this, 0));
 	TankPlayerController = Cast<AToonTanksPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
@@ -50,10 +59,12 @@ int32 AToonTanksGameMode::GetTargetTowersCount()
 void AToonTanksGameMode::HandleGameStart()
 {
 	StartGame();
+	int32 NumPlayers = GetNumPlayers();
+	UE_LOG(LogTemp, Log, TEXT("Current number of players: %d"), NumPlayers);
 	if (TankPlayerController)
 	{
 		TankPlayerController->SetPlayerEnabledState(false);
-		UE_LOG(LogTemp, Warning, TEXT("Timer Started"));
+		UE_LOG(LogTemp, Warning, TEXT("Pawn Timer Started"));
 		FTimerDelegate OnGameStart = FTimerDelegate::CreateUObject(TankPlayerController, &AToonTanksPlayerController::SetPlayerEnabledState, true);
 		GetWorldTimerManager().SetTimer(TimerHandle, OnGameStart, StartDelay, false);
 	}

@@ -24,13 +24,14 @@ public:
 	FString logString;
 
 protected:
-	void RotateTurret(FVector LookAtTarget);
+	void RotateTurret(FVector LookAtTarget, bool drawDebug = false);
 
 	UFUNCTION(BlueprintCallable)
-	void Fire();
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="BasePawn", meta = (AllowPrivateAccess = "true"))
+	virtual void Fire(FVector velocity);
+	virtual void Fire();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* BaseMesh;
@@ -39,6 +40,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ProjectileSpawnPoint;
 
+	UFUNCTION()
+	virtual void OnProjectileHitCallback(AProjectile* HitProjectile);
+
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<AProjectile> ProjectileClass;
 
