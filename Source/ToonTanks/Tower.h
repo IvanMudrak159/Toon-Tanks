@@ -15,13 +15,7 @@ class TOONTANKS_API ATower : public ABaseEnemy
 {
 	GENERATED_BODY()
 
-public:
-	virtual void HandleDestruction() override;
-
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-private:
-	void CheckFireCondition();
+	bool CheckFireCondition() override;
 };

@@ -27,6 +27,11 @@ void AProjectile::SetProjectileVelocity(FVector velocity) const
 	ProjectileMovementComponent->Velocity = velocity;
 }
 
+void AProjectile::SetDecalActor(ADecalActor* InDecal)
+{
+	this->Decal = InDecal;
+}
+
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -61,6 +66,11 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 	if (HitCameraShakeClass)
 	{
 		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(HitCameraShakeClass);
+	}
+
+	if (Decal != nullptr)
+	{
+		Decal->Destroy();
 	}
 
 	AController* InstigatorController = MyOwner->GetInstigatorController();

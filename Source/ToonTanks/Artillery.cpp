@@ -8,7 +8,6 @@
 
 AArtillery::AArtillery()
 {
-	UE_LOG(LogHAL, Warning, TEXT("0"));
 	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gun Mesh"));
 	GunMesh->SetupAttachment(TurretMesh);
 	ProjectileSpawnPoint->SetupAttachment(GunMesh);
@@ -19,31 +18,17 @@ void AArtillery::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AArtillery::BeginPlay()
+bool AArtillery::CheckFireCondition()
 {
-	UE_LOG(LogHAL, Warning, TEXT("1"));
-	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AArtillery::CheckFireCondition, FireRate, true);
-}
+	if (!Super::CheckFireCondition()) return false;
 
-void AArtillery::OnProjectileHitCallback(AProjectile* HitProjectile)
-{
-	Super::OnProjectileHitCallback(HitProjectile);
-	if (SpawnedDecal)
-	{
-		SpawnedDecal->Destroy();
-	}
-}
-
-void AArtillery::CheckFireCondition()
-{
 	if (!Tank or !IsInRange())
 	{
-		return;
+		return false;
 	}
 	if (!Tank->bAlive)
 	{
-		return;
+		return false;
 	}
 
 	FVector TankLocation = Tank->GetActorLocation();
@@ -51,10 +36,12 @@ void AArtillery::CheckFireCondition()
 	float sinValue = sin(FMath::DegreesToRadians(2 * angle));
 	float gravity = FMath::Abs(GetWorld()->GetGravityZ());
 	float initialVelocity = sqrt(Distance * gravity / sinValue) - fireForceOffset;
-	Fire(GunMesh->GetForwardVector() * initialVelocity);
-	SpawnedDecal = SpawnDecal(TankLocation);
+	ADecalActor* SpawnedDecal = SpawnDecal(TankLocation);
+	Fire(GunMesh->GetForwardVector() * initialVelocity, SpawnedDecal);
+	return true;
 }
 
+//TODO definitely should not be here
 ADecalActor* AArtillery::SpawnDecal(const FVector& TankLocation) const
 {
 	if (!Tank)
@@ -71,7 +58,6 @@ ADecalActor* AArtillery::SpawnDecal(const FVector& TankLocation) const
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams))
 	{
 		FVector DecalLocation = HitResult.ImpactPoint;
-		DecalLocation += GunMesh->GetForwardVector() * fireForceOffset;
 		DecalLocation.Z = 0;
 
 		FRotator DecalRotation = HitResult.ImpactNormal.Rotation();
@@ -83,7 +69,7 @@ ADecalActor* AArtillery::SpawnDecal(const FVector& TankLocation) const
 			if (DecalComp)
 			{
 				DecalComp->SetDecalMaterial(DecalMaterial);
-				DecalComp->DecalSize = FVector(40, 80, 80);
+				DecalComp->DecalSize = FVector(60, 120, 120);
 				Decal->SetRootComponent(DecalComp);
 			}
 			return Decal;

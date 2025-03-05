@@ -64,7 +64,7 @@ void ABasePawn::RotateTurret(FVector LookAtTarget, bool drawDebug)
 	}
 }
 
-void ABasePawn::Fire(FVector velocity)
+void ABasePawn::Fire(FVector velocity, ADecalActor* Decal)
 {
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
 		ProjectileClass,
@@ -72,7 +72,11 @@ void ABasePawn::Fire(FVector velocity)
 		ProjectileSpawnPoint->GetComponentRotation());
 	Projectile->SetProjectileVelocity(velocity);
 	Projectile->SetOwner(this);
-	Projectile->OnProjectileHit.AddDynamic(this, &ABasePawn::OnProjectileHitCallback);
+
+	if (Decal)
+	{
+		Projectile->SetDecalActor(Decal);
+	}
 }
 
 void ABasePawn::Fire()
@@ -82,13 +86,4 @@ void ABasePawn::Fire()
 		ProjectileSpawnPoint->GetComponentLocation(),
 		ProjectileSpawnPoint->GetComponentRotation());
 	Projectile->SetOwner(this);
-}
-
-void ABasePawn::OnProjectileHitCallback(AProjectile* HitProjectile)
-{
-	if (HitProjectile)
-	{
-		// Properly unsubscribe from the delegate
-		HitProjectile->OnProjectileHit.RemoveDynamic(this, &ABasePawn::OnProjectileHitCallback);
-	}
 }

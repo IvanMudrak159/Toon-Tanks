@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DecalActor.h"
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+class ADecalActor;
 class UProjectileMovementComponent;
 class USoundBase;
 class UCameraShakeBase;
@@ -24,7 +26,11 @@ public:
 	void SetProjectileVelocity(FVector velocity) const;
 	FOnProjectileHit OnProjectileHit;
 
+	void SetDecalActor(ADecalActor* InDecal);
+
 private:
+
+	ADecalActor* Decal;
 
 	void BeginPlay() override;
 

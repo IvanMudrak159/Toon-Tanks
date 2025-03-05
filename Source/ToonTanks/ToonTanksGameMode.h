@@ -9,6 +9,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartTimerFinish);
+
 UCLASS()
 class TOONTANKS_API AToonTanksGameMode : public AGameModeBase
 {
@@ -16,6 +18,7 @@ class TOONTANKS_API AToonTanksGameMode : public AGameModeBase
 
 public:
 	void ActorDied(AActor *DeadActor);
+	FOnStartTimerFinish OnStartTimerFinish;
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,8 +35,8 @@ private:
 	FTimerHandle TimerHandle;
 	float StartDelay = 3.f;
 
-	int32 TargetTowers = 0;
-	int32 GetTargetTowersCount();
+	int32 TargetEnemies = 0;
+	int32 GetTargetEnemiesCount();
 
 	void HandleGameStart();
 };

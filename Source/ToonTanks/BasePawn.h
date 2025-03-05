@@ -7,6 +7,7 @@
 #include "BasePawn.generated.h"
 
 
+class ADecalActor;
 class AProjectile;
 
 UCLASS()
@@ -26,9 +27,9 @@ public:
 protected:
 	void RotateTurret(FVector LookAtTarget, bool drawDebug = false);
 
-	UFUNCTION(BlueprintCallable)
+	virtual void Fire(FVector velocity, ADecalActor* Decal  = nullptr);
 
-	virtual void Fire(FVector velocity);
+	UFUNCTION(BlueprintCallable)
 	virtual void Fire();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
@@ -39,9 +40,6 @@ protected:
 	UStaticMeshComponent* TurretMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ProjectileSpawnPoint;
-
-	UFUNCTION()
-	virtual void OnProjectileHitCallback(AProjectile* HitProjectile);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")

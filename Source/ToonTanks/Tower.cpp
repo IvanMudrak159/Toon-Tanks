@@ -3,24 +3,16 @@
 #include "Tank.h"
 #include "TimerManager.h"
 
-void ATower::BeginPlay()
+bool ATower::CheckFireCondition()
 {
-	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ATower::CheckFireCondition, FireRate, true);
-}
+	if (!Super::CheckFireCondition()) return false;
 
-void ATower::CheckFireCondition()
-{
-	if (Tank == nullptr) return;
+	if (Tank == nullptr) return false;
 
 	if (IsInRange() && Tank->bAlive == true)
 	{
 		Fire();
+		return true;
 	}
-}
-
-void ATower::HandleDestruction()
-{
-	Super::HandleDestruction();
-	Destroy();
+	return false;
 }

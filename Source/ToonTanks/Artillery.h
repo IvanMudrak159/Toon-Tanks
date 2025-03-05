@@ -19,7 +19,7 @@ public:
 
 protected:
 	void BeginPlay() override;
-	virtual void OnProjectileHitCallback(AProjectile* HitProjectile) override;
+	bool CheckFireCondition() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BasePawn", meta = (AllowPrivateAccess = "true"))
@@ -32,9 +32,5 @@ private:
 	float angle = 45;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	float fireForceOffset = 70;
-
-	void CheckFireCondition();
 	ADecalActor* SpawnDecal(const FVector& TankLocation) const;
-
-	ADecalActor* SpawnedDecal;
 };

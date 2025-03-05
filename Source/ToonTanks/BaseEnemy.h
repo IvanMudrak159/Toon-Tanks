@@ -14,15 +14,25 @@ class TOONTANKS_API ABaseEnemy : public ABasePawn
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void HandleDestruction() override;
 
 protected:
 	FTimerHandle TimerHandle;
 
 	virtual void BeginPlay() override;
 	bool IsInRange() const;
+	bool bGameStarted = false;
+
+	UFUNCTION()
+	void HandleGameTimerStart();
+
+	UFUNCTION()
+	void Reload();
 
 	ATank* Tank;
 	float FireRate = 2.f;
+
+	virtual bool CheckFireCondition();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float FireRange = 15.f;

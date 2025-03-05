@@ -16,4 +16,8 @@ class TOONTANKS_API AToonTanksPlayerController : public APlayerController
 
 public:
 	void SetPlayerEnabledState(bool bPlayerEnabled);
+	void BeginPlay() override;
+
+	UFUNCTION()
+	void HandleStartTimer();
 };
